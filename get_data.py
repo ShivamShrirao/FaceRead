@@ -41,10 +41,10 @@ for uu in dt:
 	thrds[-1].setDaemon(True)
 	thrds[-1].start()
 	while len(thrds)>=THREADS:
+		sleep(1)
 		for ix,t in enumerate(thrds):
 			if not t.isAlive():
 				thrds.pop(ix)
-		sleep(1)
 
 try:
 	print("[*] Waiting to finish threads.")
