@@ -3,7 +3,7 @@ import requests
 from threading import Thread, RLock
 from time import sleep
 
-THREADS = 100
+THREADS = 50
 lk=RLock()
 
 with open("Face_Recognition.json","r") as f:
@@ -20,24 +20,25 @@ print("Total:",TOTAL)
 def download(ltt,idx):
 	try:
 		ret = requests.get(ltt['content'])
+		global IDD,TOTAL
+		lk.acquire()
+		IDD+=1
+		lk.release()
+		if ret.status_code==200:
+			print("[+]",ret,",",IDD)
+			name = ltt['content'].split('/')[-1]
+			ltt["path"] = "Images/"+name
+			with open(ltt["path"],"wb") as f:
+				f.write(ret.content)
+		else:
+			print("[!]",ret,",",IDD)
 	except Exception as e:
 		print(e)
-	global IDD,TOTAL
-	lk.acquire()
-	IDD+=1
-	lk.release()
-	if ret.status_code==200:
-		print("[+]",ret,",",IDD)
-		name = ltt['content'].split('/')[-1]
-		ltt["path"] = "Images/"+name
-		with open(ltt["path"],"wb") as f:
-			f.write(ret.content)
-	else:
-		print("[!]",ret,",",IDD)
 
 thrds=[]
 for idx,uu in enumerate(dt):
 	thrds.append(Thread(target=download,args=(uu,idx)))
+	thrds[-1].setDaemon(True)
 	thrds[-1].start()
 	while len(thrds)>=THREADS:
 		for ix,t in enumerate(thrds):
