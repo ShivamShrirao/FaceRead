@@ -17,7 +17,7 @@ IDD=0
 TOTAL=len(dt)
 print("Total:",TOTAL)
 
-def download(ltt,idx):
+def download(ltt):
 	try:
 		ret = requests.get(ltt['content'])
 		global IDD,TOTAL
@@ -36,8 +36,8 @@ def download(ltt,idx):
 		print(e)
 
 thrds=[]
-for idx,uu in enumerate(dt):
-	thrds.append(Thread(target=download,args=(uu,idx)))
+for uu in dt:
+	thrds.append(Thread(target=download,args=(uu,)))
 	thrds[-1].setDaemon(True)
 	thrds[-1].start()
 	while len(thrds)>=THREADS:
