@@ -26,7 +26,7 @@ def download(ltt):
 		lk.release()
 		if ret.status_code==200:
 			print("[+]",ret,",",IDD)
-			name = ltt['content'].split('/')[-1]
+			name = ltt['content'].split('/')[-1][39:]
 			ltt["path"] = "Images/"+name
 			with open(ltt["path"],"wb") as f:
 				f.write(ret.content)
